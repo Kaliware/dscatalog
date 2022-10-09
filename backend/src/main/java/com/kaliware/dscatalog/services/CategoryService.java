@@ -2,9 +2,13 @@ package com.kaliware.dscatalog.services;
 
 import com.kaliware.dscatalog.dto.CategoryDTO;
 import com.kaliware.dscatalog.entities.Category;
+import com.kaliware.dscatalog.services.exceptions.DatabaseException;
 import com.kaliware.dscatalog.services.exceptions.ResourceNotFoundException;
 import com.kaliware.dscatalog.repositories.CategoryRepository;
+import org.hibernate.dialect.Database;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,8 +50,18 @@ public class CategoryService{
       entity.setName(dto.getName());
       entity = repository.save(entity);
       return new CategoryDTO(entity);
-    } catch(javax.persistence.EntityNotFoundException e){
+    }catch(javax.persistence.EntityNotFoundException e){
       throw new ResourceNotFoundException("Id not found " + id);
+    }
+  }
+
+  public void delete(Long id){
+    try{
+      repository.deleteById(id);
+    }catch(EmptyResultDataAccessException e){
+      throw new ResourceNotFoundException("Id not found " + id);
+    }catch(DataIntegrityViolationException e){
+      throw new DatabaseException("Integrity violation");
     }
   }
 }
