@@ -1,5 +1,6 @@
 package com.kaliware.dscatalog.controllers;
 
+import com.kaliware.dscatalog.dto.CategoryDTO;
 import com.kaliware.dscatalog.entities.Category;
 import com.kaliware.dscatalog.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class CategoryController{
   CategoryService service;
 
   @GetMapping
-  public ResponseEntity<List<Category>> findAll(){
+  public ResponseEntity<List<CategoryDTO>> findAll(){
     return ResponseEntity.ok().body(service.findAll());
   }
 }
