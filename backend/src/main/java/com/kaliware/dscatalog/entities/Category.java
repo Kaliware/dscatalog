@@ -1,11 +1,17 @@
 package com.kaliware.dscatalog.entities;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
 @Entity
+@EqualsAndHashCode
+@NoArgsConstructor
 @Table(name = "tb_category")
 public class Category implements Serializable{
 
@@ -21,9 +27,6 @@ public class Category implements Serializable{
 
   @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
   private Instant updatedAt;
-
-  public Category(){
-  }
 
   public Category(Long id, String name){
     this.id = id;
@@ -63,16 +66,5 @@ public class Category implements Serializable{
   public void preUpdate(){
     updatedAt = Instant.now();
   }
-  @Override
-  public boolean equals(Object obj){
-    if(this == obj) return true;
-    if(obj == null || getClass() != obj.getClass()) return false;
-    Category category = (Category) obj;
-    return Objects.equals(getId(), category.getId());
-  }
 
-  @Override
-  public int hashCode(){
-    return Objects.hash(getId());
-  }
 }
