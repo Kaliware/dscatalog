@@ -1,7 +1,10 @@
 package com.kaliware.dscatalog.services;
 
+import com.kaliware.dscatalog.dto.CategoryDTO;
 import com.kaliware.dscatalog.dto.ProductDTO;
+import com.kaliware.dscatalog.entities.Category;
 import com.kaliware.dscatalog.entities.Product;
+import com.kaliware.dscatalog.repositories.CategoryRepository;
 import com.kaliware.dscatalog.repositories.ProductRepository;
 import com.kaliware.dscatalog.services.exceptions.DatabaseException;
 import com.kaliware.dscatalog.services.exceptions.ResourceNotFoundException;
@@ -21,6 +24,9 @@ public class ProductService{
   @Autowired
   ProductRepository repository;
 
+  @Autowired
+  private CategoryRepository categoryRepository;
+
   @Transactional(readOnly = true)
   public Page<ProductDTO> findAllPaged(PageRequest pageRequest){
     Page<Product> list = repository.findAll(pageRequest);
@@ -37,7 +43,7 @@ public class ProductService{
   @Transactional
   public ProductDTO insert(ProductDTO dto){
     Product entity = new Product();
-    //entity.setName(dto.getName());
+    copyDtoToEntity(dto, entity);
     entity = repository.save(entity);
     return new ProductDTO(entity);
   }
@@ -46,7 +52,7 @@ public class ProductService{
   public ProductDTO update(Long id, ProductDTO dto){
     try{
       Product entity = repository.getReferenceById(id);
-      //entity.setName(dto.getName());
+      copyDtoToEntity(dto, entity);
       entity = repository.save(entity);
       return new ProductDTO(entity);
     }catch(javax.persistence.EntityNotFoundException e){
@@ -63,4 +69,18 @@ public class ProductService{
       throw new DatabaseException("Integrity violation");
     }
   }
+  private void copyDtoToEntity(ProductDTO dto, Product entity) {
+    entity.setName(dto.getName());
+    entity.setDescription(dto.getDescription());
+    entity.setPrice(dto.getPrice());
+    entity.setImgUrl(dto.getImgUrl());
+    entity.setDate(dto.getDate());
+
+    entity.getCategories().clear();
+    for (CategoryDTO catDto : dto.getCategories()) {
+      Category category = categoryRepository.getReferenceById(catDto.getId());
+      entity.getCategories().add(category);
+    }
+  }
 }
+
