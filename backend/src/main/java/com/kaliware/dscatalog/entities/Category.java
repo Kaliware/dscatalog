@@ -1,13 +1,11 @@
 package com.kaliware.dscatalog.entities;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Objects;
 
 @Entity
 @EqualsAndHashCode
